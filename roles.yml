@@ -1,0 +1,24 @@
+---
+- hosts: all
+  become: true
+  tasks:
+  - name: update Ubuntu server
+    apt: 
+       update_cache: yes
+       name: 
+    when: ansible_distribution == "Ubuntu"
+  
+- hosts: all
+  become: true
+  roles: 
+    - base
+
+- hosts: all
+  become: true
+  roles:
+      - webserver
+
+- hosts: all
+  become: true
+  roles:
+     - packages_script

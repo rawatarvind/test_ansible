@@ -1,0 +1,9 @@
+---
+
+- name: Create a new user with a specific UID
+  ansible.builtin.user:
+      name: '{{ username }}'
+      uid: '{{ uid }}'  # specify the desired UID
+      password: "{{ passwd }}" # change passwd in newuserpassword
+      shell: "/bin/bash"
+      state: present

@@ -1,0 +1,40 @@
+---
+- name: Copy Packages to Target Server
+  ansible.builtin.copy: 
+     src: /home/sarvind/ansible/Ubuntu_packages
+     dest: /tmp
+    
+  when: ansible_distribution == "Ubuntu"
+     
+- name: Make ubuntu.sh script executable for Ubuntu.
+  ansible.builtin.file:
+     path: /tmp/Ubuntu_packages/ubuntu.sh
+     mode: '0755'
+         
+- name: Run Ubuntu.sh Script.
+  ansible.builtin.shell: |
+        ./ubuntu.sh
+  args: 
+      chdir: /tmp/Ubuntu_packages
+
+- name: Copy additional script to target server
+  ansible.builtin.copy:
+     src: Ubuntu-config.sh
+     dest: /tmp/Ubuntu_packages/Ubuntu-config.sh
+     mode: '0755'
+      
+
+
+- name: Copy  script File in CentOS .
+  ansible.builtin.copy:
+     src: CentOS-config.sh
+     dest: /tmp
+     mode: '0755'
+  when: ansible_distribution == "CentOS"
+
+- name: Run CentOS-config.sh Script
+  ansible.builtin.shell: |
+        ./CentOS-config.sh
+  args: 
+      chdir: /tmp          
+  when: ansible_distribution == "CentOS"

@@ -1,0 +1,12 @@
+---
+- name: Create a new group with a specific GID
+  ansible.builtin.group:
+      name: "{{ groupname }}"
+      gid: "{{ uid }}" # specify the desired GID
+      state: present
+- name: Ensure the user is added to the group
+  ansible.builtin.user:
+      name: "{{ username }}"
+      groups: "{{ groupname }}"
+      append: yes  # ensures the user is added to the group without removing other groups
+      state: present

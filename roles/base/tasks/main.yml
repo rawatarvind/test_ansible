@@ -1,0 +1,28 @@
+---
+- name: Update Ubuntu server
+  ansible.builtin.apt:
+      update_cache: yes
+      name: 
+        - vim 
+        - openssh-server
+        - mplayer
+  when: ansible_distribution == "Ubuntu"
+- name: change in  the file of ssh config
+  lineinfile:
+       path: /etc/ssh/sshd_config
+       regexp: "{{ item.regexp }}"
+       line: "{{ item.line }}"
+  register: ssh
+  loop:
+      - { regexp: '^#PermitRootLogin', line: 'PermitRootLogin yes' }
+      - { regexp: '^#PasswordAuthentication no', line: 'PasswordAuthentication yes' }
+  notify: restart_ssh      
+
+- name: Disabled the Selinux in CentOS
+  lineinfile:
+      path: /etc/selinux/config
+      regexp: '^SELINUX='
+      line: 'SELINUX={{ status }}'
+  when: ansible_distribution == "CentOS"
+      
+ 
