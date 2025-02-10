@@ -1,0 +1,8 @@
+- name: Add user-specific sudo rules to /etc/sudoers
+  lineinfile: 
+    path: /etc/sudoers
+    line: "{{ item }}"
+    state: present
+    validate: '/usr/sbin/visudo -cf %s'
+
+  loop: "{{ sudo_rules }}"

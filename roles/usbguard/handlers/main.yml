@@ -1,0 +1,4 @@
+- name: restart_usbguard
+  service: 
+      name: "{{ usbguard_service }}" 
+      state: restarted

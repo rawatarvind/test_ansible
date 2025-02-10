@@ -1,21 +1,13 @@
-apache_package_name: httpd
-apache_service: httpd
-php_package_name: php
+ssh_service: ssh
+username: srikanth
+uid: 1989
+passwd: srikanth123
 
-ssh_service: sshd
-status: disabled
-
-username: sarvind
-uid: 1859
-passwd: sarvind123
-
-gid: 1112
-groupname: sysadmin
-
+groupid: 2021
+groupname: installation
 usbguard_rules:
   - "allow with-interface one-of {03:01:02}"
   - "allow with-interface one-of {03:01:01}"
-
 
 usbguard_service: usbguard
 
@@ -30,4 +22,5 @@ sudo_rules:
       - "{{ username }} ALL=NOPASSWD: /usr/bin/less *"
       - "{{ username }} ALL=NOPASSWD: /usr/bin/killall *"
       - "{{ username }} ALL=NOPASSWD: /usr/bin/sh *"
+
 

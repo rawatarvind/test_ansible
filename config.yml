@@ -12,7 +12,8 @@
   become: true
   roles: 
     - base
-    - user_create
-    - ssh_key
-    - group_create
-    - packages_script    
+
+- hosts: all
+  become: true
+  roles:
+     - packages_script  

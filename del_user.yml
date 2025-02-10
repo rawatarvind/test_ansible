@@ -1,0 +1,14 @@
+---
+- hosts: all
+  become: true
+  tasks:
+
+  - name: delete the users 
+    ansible.builtin.user: 
+         name: "{{ username }}"
+         state: absent
+
+  - name: remove group also
+    ansible.builtin.group:
+          name: '{{ groupname }}'
+          state: absent 

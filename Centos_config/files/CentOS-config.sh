@@ -25,7 +25,7 @@ enabled=1
 EOF
 
 
-yum install google-chrome skypeforlinux.x86_64 zoom.x86_64 wps-office.x86_64 glade* slack.x86_64 fusioninventory-agent.x86_64  thunderbird openvpn.x86_64 usbguard.x86_64  anydesk.x86_64 ntfs-3g.x86_64 kernel-ml-5.9.1-1.el7.elrepo.x86_64 -y 
+yum install google-chrome  zoom.x86_64 wps-office.x86_64 glade* slack.x86_64 fusioninventory-agent.x86_64  thunderbird openvpn.x86_64 usbguard.x86_64  anydesk.x86_64 ntfs-3g.x86_64 kernel-ml-5.9.1-1.el7.elrepo.x86_64 -y 
 
 
 if [ $? -eq 0 ]
@@ -175,6 +175,18 @@ echo "The default kernel-ml-5.9.1-1.el7.elrepo.x86_64 has been installed, plz re
 #systemctl stop firewalld.service
 #systemctl disable firewalld.service
 #systemctl status firewalld.service
+
+yum install epel-release -y
+
+yum install snapd
+
+systemctl enable --now snapd.socket
+
+ln -s /var/lib/snapd/snap /snap
+
+snap install skype
+
+
 
 echo "Reboot the system "
 

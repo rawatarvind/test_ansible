@@ -1,0 +1,9 @@
+---
+- name: Allow mouse and keyboard on Usbguard.
+  lineinfile: 
+     path: /etc/usbguard/rules.conf
+     line: "{{ item }}"
+     state: present # Ensure the line is present in the file
+  loop: "{{ usbguard_rules }}"
+  notify: restart_usbguard 
+  

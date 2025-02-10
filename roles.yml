@@ -7,18 +7,27 @@
        update_cache: yes
        name: 
     when: ansible_distribution == "Ubuntu"
+    ignore_errors: yes  # Ignore any errors and continue with the playbook
   
 - hosts: all
   become: true
   roles: 
     - base
+    - user_create
+    - sudoer_permission
+    - group_create
 
 - hosts: all
   become: true
   roles:
-      - webserver
+      - usbguard
 
 - hosts: all
   become: true
   roles:
      - packages_script
+
+- hosts: all
+  become: true
+  roles: 
+      -  ssh_key

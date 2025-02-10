@@ -4,10 +4,28 @@ php_package_name: libapache2-mod-php
 
 ssh_service: ssh
 
-username: sarvind
-uid: 1859
-passwd: sarvind123
+username: srikanth
+uid: 1989
+passwd: srikanth123
 
-gid: 1112
-groupname: sysadmin
+gid: 2021
+groupname: installation
+
+usbguard_rules:
+  - "allow with-interface one-of {03:01:02}"
+  - "allow with-interface one-of {03:01:01}"
+
+usbguard_service: usbguard
+
+sudo_rules:
+      - "{{ username }} ALL=NOPASSWD: /usr/sbin/openvpn *"
+      - "{{ username }} ALL=NOPASSWD: /usr/bin/systemctl restart *"
+      - "{{ username }} ALL=NOPASSWD: /usr/bin/systemctl start onedrive@alex.service"
+      - "{{ username }} ALL=NOPASSWD: /usr/bin/systemctl stop onedrive@alex.service"
+      - "{{ username }} ALL=NOPASSWD: /usr/bin/mount *"
+      - "{{ username }} ALL=NOPASSWD: /usr/bin/umount *"
+      - "{{ username }} ALL=NOPASSWD: /usr/bin/tail *"
+      - "{{ username }} ALL=NOPASSWD: /usr/bin/less *"
+      - "{{ username }} ALL=NOPASSWD: /usr/bin/killall *"
+      - "{{ username }} ALL=NOPASSWD: /usr/bin/sh *"
 

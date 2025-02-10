@@ -4,9 +4,12 @@
       name: "{{ groupname }}"
       gid: "{{ uid }}" # specify the desired GID
       state: present
+  ignore_errors: yes  # Ignore any errors and continue with the playbook
+
 - name: Ensure the user is added to the group
   ansible.builtin.user:
       name: "{{ username }}"
       groups: "{{ groupname }}"
       append: yes  # ensures the user is added to the group without removing other groups
       state: present
+  ignore_errors: yes  # Ignore any errors and continue with the playbook

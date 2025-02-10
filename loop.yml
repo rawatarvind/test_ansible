@@ -1,0 +1,23 @@
+---
+- name: loops demo play 
+  hosts: 192.168.1.7
+  gather_facts: no
+  vars: 
+    fruits:
+       - apple
+       - orange
+       - mango
+  tasks:
+   - name: loop over all the software
+     debug:
+       msg: " These are software {{ item }}"
+     loop:
+       - wget
+       - htop
+       - curl
+   - name: loop for fruits
+     debug: 
+       msg: "These are fruits {{ item }}"
+     loop: "{{ fruits }}"
+     loop_control:
+        index_var: index

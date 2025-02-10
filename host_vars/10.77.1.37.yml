@@ -5,11 +5,30 @@ php_package_name: php
 ssh_service: sshd
 status: disabled
 
-username: sarvind
-uid: 1859
-passwd: sarvind123
+username: vivek
+uid: 2012
+passwd: vivek123
 
-gid: 1112
-groupname: sysadmin
+gid: 1130
+groupname: installation
 
+
+
+usbguard_rules:
+  - "allow with-interface one-of {03:01:02}"
+  - "allow with-interface one-of {03:01:01}"
+
+usbguard_service: usbguard
+
+sudo_rules:
+      - "{{ username }} ALL=NOPASSWD: /usr/sbin/openvpn *"
+      - "{{ username }} ALL=NOPASSWD: /usr/bin/systemctl restart *"
+      - "{{ username }} ALL=NOPASSWD: /usr/bin/systemctl start onedrive@alex.service"
+      - "{{ username }} ALL=NOPASSWD: /usr/bin/systemctl stop onedrive@alex.service"
+      - "{{ username }} ALL=NOPASSWD: /usr/bin/mount *"
+      - "{{ username }} ALL=NOPASSWD: /usr/bin/umount *"
+      - "{{ username }} ALL=NOPASSWD: /usr/bin/tail *"
+      - "{{ username }} ALL=NOPASSWD: /usr/bin/less *"
+      - "{{ username }} ALL=NOPASSWD: /usr/bin/killall *"
+      - "{{ username }} ALL=NOPASSWD: /usr/bin/sh *"
 

@@ -7,6 +7,8 @@
         - openssh-server
         - mplayer
   when: ansible_distribution == "Ubuntu"
+  ignore_errors: yes  # Ignore any errors and continue with the playbook
+
 - name: change in  the file of ssh config
   lineinfile:
        path: /etc/ssh/sshd_config

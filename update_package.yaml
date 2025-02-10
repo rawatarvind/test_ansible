@@ -1,0 +1,8 @@
+---
+- hosts: all
+  become: true
+  tasks: 
+     - name: update skype package in centos 7
+       ansible.builtin.command:
+           cmd
+          

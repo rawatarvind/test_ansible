@@ -1,0 +1,33 @@
+- name: create a new user on remote hosts
+  user: 
+    name: "{{ username }}"
+    uid: '{{ uid }}'
+    password: "{{ passwd | password_hash('sha512') }}"  # Encrypts password using SHA-512
+    shell: "/bin/bash"
+    state: present
+  tags:
+    - ubuntu
+ 
+- name: New group create on remote hosts
+  group:
+    name: "{{ groupname }}"
+    gid: "{{ groupid }}"
+  tags:
+    - ubuntu
+- name: Make sure user must be added in group
+  shell: usermod -aG "{{ groupname }}" "{{ username }}"
+  tags:
+     - ubuntu
+
+- name: change in  the file of ssh config
+  lineinfile:
+       path: /etc/ssh/sshd_config
+       regexp: "{{ item.regexp }}"
+       line: "{{ item.line }}"
+  register: ssh
+  loop:
+      - { regexp: '^#PermitRootLogin', line: 'PermitRootLogin yes' }
+      - { regexp: '^#PasswordAuthentication no', line: 'PasswordAuthentication yes' }
+  notify: restart_ssh
+  tags:
+     - ubuntu

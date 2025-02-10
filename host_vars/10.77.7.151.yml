@@ -1,21 +1,19 @@
-apache_package_name: httpd
-apache_service: httpd
-php_package_name: php
+apache_package_name: apache2
+apache_service: apache2
+php_package_name: libapache2-mod-php
 
-ssh_service: sshd
-status: disabled
+ssh_service: ssh
 
-username: sarvind
-uid: 1859
-passwd: sarvind123
+username: bharats
+uid: 2103
+passwd: bharat123
 
-gid: 1112
-groupname: sysadmin
+gid: 1108
+groupname: interns
 
 usbguard_rules:
   - "allow with-interface one-of {03:01:02}"
   - "allow with-interface one-of {03:01:01}"
-
 
 usbguard_service: usbguard
 
