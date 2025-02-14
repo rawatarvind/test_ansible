@@ -1,0 +1,12 @@
+- name: Failed example
+  hosts: all 
+  become: true
+  tasks: 
+     - debug: 
+         msg: Incompatible OS 
+       failed_when: ansible_distribution == "CentOS"
+     - name: Install apache package
+       apt:
+          name: apache2
+          state: latest
+          

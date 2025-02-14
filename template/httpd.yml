@@ -1,0 +1,26 @@
+- name: web server configure
+  hosts: centos_server
+  become: yes
+  tasks:
+     - name: install httpd package
+       yum:
+         name: httpd
+         state: present
+     - name: Start and enable the service of httpd
+       service: 
+          name: httpd
+          state: started
+          enabled: true
+     - name: set webserver config
+       template:
+           src: templates/index.j2
+           dest: /var/www/html/index.html
+     - name: allow on firewall http service
+       firewalld:
+           service: http
+           permanent: yes
+           state: enabled
+     - name: reload firewall service
+       service:
+           name: firewalld
+           state: reloaded

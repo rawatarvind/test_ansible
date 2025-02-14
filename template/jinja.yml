@@ -1,0 +1,11 @@
+---
+- name: MOTD file create on remote hosts.
+  hosts: centos_server
+  gather_facts: yes  
+  become: true
+  tasks:
+    - name: using jinja template to copy file.
+      template:
+         src: templates/motd.j2
+         dest: /etc/motd
+

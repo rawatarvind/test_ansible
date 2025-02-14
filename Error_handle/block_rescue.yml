@@ -1,0 +1,15 @@
+- hosts: all
+  become: yes 
+  tasks: 
+    - block:
+       - name: install epel repository 
+         command: sudo  yum install epel-release -y
+         
+       - name: Verify the file exist or not
+         shell: ls /etc/yum.repos.d/epel.repo
+      when: ansible_distribution == 'CentOS'
+      rescue:
+        - name: Copy epel repository  file from ansible control node
+          copy:
+             src: /etc/yum.repos.d/epel.repo
+             dest: /etc/yum.repos.d/epel.repo

@@ -1,0 +1,13 @@
+- hosts: 10.77.1.37
+  tasks:
+    - block:
+      - name: install httpd packages on centos
+        yum:
+          name: httpd 
+          state: present
+      - name: enabled  service 
+        service:
+           name: httpd 
+           state: enabled
+      become: yes
+      when: ansible_distribution == 'CentOS'
