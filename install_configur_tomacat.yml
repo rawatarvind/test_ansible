@@ -1,0 +1,54 @@
+---
+- name: Install & configure Tomcat
+  hosts: centos_server
+  become: yes
+  gather_facts: yes
+  vars:
+    java_version: java-1.8.0-openjdk  # You should install Java separately
+    req_tomcat_ver: 10.1.35
+    tomcat_port: 8090
+    tomcat_url: "https://dlcdn.apache.org/tomcat/tomcat-{{ req_tomcat_ver.split('.')[0] }}/v{{ req_tomcat_ver }}/bin/apache-tomcat-{{ req_tomcat_ver }}.tar.gz"
+    tomcat_home: /usr/local/tomcat_10  # Define Tomcat's home directory
+
+  tasks:
+    - name: Download Tomcat
+      get_url:
+        url: "{{ tomcat_url }}"
+        dest: "/tmp/apache-tomcat-{{ req_tomcat_ver }}.tar.gz" # Download to /tmp
+        validate_certs: no # Consider setting to yes if you can verify the certificate
+      tags:
+        - download
+
+    - name: Extract Tomcat
+      unarchive:
+        src: "/tmp/apache-tomcat-{{ req_tomcat_ver }}.tar.gz"
+        dest: "/tmp"
+        remote_src: yes
+      tags:
+        - extract
+
+    - name: Create Tomcat installation directory
+      file:
+        path: "{{ tomcat_home }}"
+        state: directory
+        mode: 0755
+      tags:
+        - create_dir
+    - name: Move Tomcat installation
+      command: mv /tmp/apache-tomcat-{{req_tomcat_ver}} "{{ tomcat_home }}"
+      tags:
+          - move
+
+    - name: Replace default port of Tomcat
+      template:
+          src: template/server.xml.j2
+          dest: "{{ tomcat_home }}/apache-tomcat-{{req_tomcat_ver}}/conf/server.xml"
+      notify: restart tomcat
+      tags:
+          - config
+    - name: Run tomcat application 
+      shell: nohup "{{ tomcat_home }}/apache-tomcat-{{req_tomcat_ver}}/bin/startup.sh" &
+      tags: 
+      - start
+
+    

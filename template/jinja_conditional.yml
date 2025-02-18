@@ -1,0 +1,14 @@
+- name: conditional example with jinja templates
+  hosts: centos_server
+  vars:
+     fruits:
+        - mango
+        - apple
+        - pineapple
+        - banana
+  tasks:
+     - name: loop use with jinja templates 
+       template:
+           src: templates/fruits.j2
+           dest: /home/sarvind/fruits.txt
+              
