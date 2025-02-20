@@ -4,15 +4,19 @@
   become: yes
   gather_facts: yes
   vars:
-    java_version: java-1.8.0-openjdk  # You should install Java separately
+    java_version: java-11-openjdk
     req_tomcat_ver: 10.1.35
     tomcat_port: 8090
     tomcat_url: "https://dlcdn.apache.org/tomcat/tomcat-{{ req_tomcat_ver.split('.')[0] }}/v{{ req_tomcat_ver }}/bin/apache-tomcat-{{ req_tomcat_ver }}.tar.gz"
     tomcat_home: /usr/local/tomcat_10  # Define Tomcat's home directory
     tomcat_user: tomcat  # User to run Tomcat as
     tomcat_group: tomcat # Group to run Tomcat as
-
+ 
   tasks: 
+    - name: Install Java (replace with your preferred method)
+      yum:  # Or apt, or your preferred package manager
+        name: "{{ java_version }}"
+        state: present
     - name: Create Tomcat group if it doesn't exist
       group:
         name: "{{ tomcat_group }}"
@@ -73,26 +77,29 @@
       template:
         src: template/tomcat.service.j2
         dest: /etc/systemd/system/tomcat.service
+      notify: reload systemd
       tags: 
          - service
-    - name: Reload systemd daemon
+    
+    - name: Check Tomcat Status
+      command: systemctl is-active tomcat
+      register: tomcat_status
+      ignore_errors: yes
+      
+    - name: Start Tomcat if not running
+      systemd:  # Use systemd to *start* the service
+         name: tomcat
+         state: started
+         enabled: yes 
+      when: tomcat_status.rc != 0 and tomcat_status is defined
+
+   
+
+
+
+  handlers:
+    - name: reload systemd
       systemd:
         daemon_reload: yes
-
-    - name: Enable Tomcat service
-      systemd:
-        name: tomcat
-        enabled: yes
-      tags:
-      - reload    
-      
-    - name: Start Tomcat service
-      systemd:
-        name: tomcat
-        state: started
-      tags: 
-      - started
-
-
 
     
