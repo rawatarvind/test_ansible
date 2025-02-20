@@ -9,8 +9,22 @@
     tomcat_port: 8090
     tomcat_url: "https://dlcdn.apache.org/tomcat/tomcat-{{ req_tomcat_ver.split('.')[0] }}/v{{ req_tomcat_ver }}/bin/apache-tomcat-{{ req_tomcat_ver }}.tar.gz"
     tomcat_home: /usr/local/tomcat_10  # Define Tomcat's home directory
+    tomcat_user: tomcat  # User to run Tomcat as
+    tomcat_group: tomcat # Group to run Tomcat as
 
-  tasks:
+  tasks: 
+    - name: Create Tomcat group if it doesn't exist
+      group:
+        name: "{{ tomcat_group }}"
+        state: present
+
+    - name: Create Tomcat user and group
+      user:
+        name: "{{ tomcat_user }}"
+        group: "{{ tomcat_group }}"
+        create_home: no
+        system: yes
+
     - name: Download Tomcat
       get_url:
         url: "{{ tomcat_url }}"
@@ -32,23 +46,53 @@
         path: "{{ tomcat_home }}"
         state: directory
         mode: 0755
+        owner: "{{ tomcat_user }}"
+        group: "{{ tomcat_group }}"
       tags:
         - create_dir
+
     - name: Move Tomcat installation
-      command: mv /tmp/apache-tomcat-{{req_tomcat_ver}} "{{ tomcat_home }}"
+      command: rsync -avzP  /tmp/apache-tomcat-{{req_tomcat_ver}}/ "{{ tomcat_home }}"
       tags:
           - move
+    - name: Change ownership of Tomcat directory
+      file: 
+        path: "{{ tomcat_home }}"
+        state: directory
+        recurse: yes
+        owner: "{{ tomcat_user }}"
+        group: "{{ tomcat_group }}"
 
     - name: Replace default port of Tomcat
       template:
           src: template/server.xml.j2
-          dest: "{{ tomcat_home }}/apache-tomcat-{{req_tomcat_ver}}/conf/server.xml"
-      notify: restart tomcat
+          dest: "{{ tomcat_home }}/conf/server.xml"
       tags:
           - config
-    - name: Run tomcat application 
-      shell: nohup "{{ tomcat_home }}/apache-tomcat-{{req_tomcat_ver}}/bin/startup.sh" &
+    - name: Create Tomcat service file
+      template:
+        src: template/tomcat.service.j2
+        dest: /etc/systemd/system/tomcat.service
       tags: 
-      - start
+         - service
+    - name: Reload systemd daemon
+      systemd:
+        daemon_reload: yes
+
+    - name: Enable Tomcat service
+      systemd:
+        name: tomcat
+        enabled: yes
+      tags:
+      - reload    
+      
+    - name: Start Tomcat service
+      systemd:
+        name: tomcat
+        state: started
+      tags: 
+      - started
+
+
 
     

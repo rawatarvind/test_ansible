@@ -1,0 +1,127 @@
+---
+- name: Installed and configure Kafka
+  hosts: centos_server
+  become: yes
+  vars: 
+    req_kafka_ver: 2.13-3.8.1
+    kafka_url: https://dlcdn.apache.org/kafka/3.8.1/kafka_{{ req_kafka_ver }}.tgz
+    java_version: java-11-openjdk
+    kafka_user: kafka
+    kafka_group: kafka
+    kafka_home: /home/kafka
+    kafka_data_dir: "{{ kafka_home }}/kafka/data"  
+    zookeeper_data_dir: "{{ kafka_data_dir }}/zookeeper"
+
+  tasks: 
+    - name: Ensure Java is installed (example - adapt as needed)
+      package:
+        name: "{{ java_version }}"
+        state: present
+      
+    - name: create group 
+      group: 
+         name: "{{ kafka_group }}"
+         state: present
+         
+    - name: create user for kafka
+      user: 
+         name: "{{ kafka_user }}"
+         state: present 
+         create_home: yes
+         system: yes
+
+    - name: Download  kafka for centos 
+      get_url: 
+         url: https://dlcdn.apache.org/kafka/3.8.1/kafka_{{ req_kafka_ver }}.tgz
+         dest: /tmp
+
+    - name: Extract the file 
+      unarchive:
+        src: /tmp/kafka_{{ req_kafka_ver }}.tgz
+        dest: /tmp/
+        remote_src: yes
+      tags: 
+       - unarchive
+
+    - name: Rsync Kafka to destination
+      synchronize: # Use synchronize module, better for file transfer
+        src: /tmp/kafka_{{req_kafka_ver }}/
+        dest: "{{ kafka_home }}/kafka"
+        rsync_opts: -avzP  # Or just -avz if you don't need progress
+      tags: 
+      - move
+
+    - name: change ownership of kafka
+      file:
+        path: "{{ kafka_home }}"
+        state: directory
+        recurse: yes
+        owner: "{{ kafka_user }}"
+        group: "{{ kafka_group }}"
+    - name: Create Kafka data directory
+      file:
+        path: "{{ kafka_data_dir }}"
+        state: directory
+        owner: "{{ kafka_user }}"
+        group: "{{ kafka_group }}"
+        mode: 0755
+        recurse: yes
+    - name: Create Zookeeper data directory
+      file:
+        path: "{{ zookeeper_data_dir }}"
+        state: directory
+        owner: "{{ kafka_user }}"
+        group: "{{ kafka_group }}"
+        mode: 0755
+        recurse: yes
+
+    - name: Create zookeeper service
+      template: 
+        src: template/zookeeper.service.j2
+        dest: /etc/systemd/system/zookeeper.service
+      notify: restart zookeeper
+
+    - name: Create kafka service
+      template:
+         src: template/kafka.service.j2
+         dest: /etc/systemd/system/kafka.service
+      notify: reload systemd
+  
+    - name: Reload systemd daemon
+      systemd:
+        daemon_reload: yes
+      notify: restart kafka # Reload kafka after config changes
+    
+    - name: Enable Zookeeper service
+      systemd:
+        name: zookeeper
+        enabled: yes
+        state: started
+    
+    - name: Enable Kafka service
+      systemd:
+        name: kafka
+        enabled: yes
+        state: started
+
+
+  handlers:
+    - name: restart zookeeper
+      systemd:
+        name: zookeeper
+        state: restarted
+
+    - name: reload systemd
+      systemd:
+        name: systemd-journald # or systemd
+        state: restarted
+
+    - name: restart kafka
+      systemd:
+        name: kafka
+        state: restarted
+
+  
+
+
+      

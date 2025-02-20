@@ -1,0 +1,14 @@
+[Unit]
+Description=Apache Kafka Service that requires zookeeper service
+Requires=zookeeper.service
+After=zookeeper.service
+
+[Service]
+Type=simple
+User=kafka
+ExecStart= {{ kafka_home }}/kafka/bin/kafka-server-start.sh {{ kafka_home }}/kafka/config/server.properties                            
+ExecStop={{ kafka_home }}/kafka/bin/kafka-server-stop.sh
+Restart=on-abnormal
+
+[Install]
+WantedBy=multi-user.target

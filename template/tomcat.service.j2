@@ -1,0 +1,22 @@
+[Unit]
+Description=Apache Tomcat Web Application Server
+After=network.target
+
+[Service]
+User={{ tomcat_user }}
+Group={{ tomcat_group }}
+
+
+Environment=JAVA_HOME=/usr/lib/jvm/java-11-openjdk 
+WorkingDirectory= "{{ tomcat_home }}"
+
+ExecStart={{ tomcat_home }}/bin/catalina.sh run
+ExecStop={{ tomcat_home }}/bin//catalina.sh stop
+Restart=always
+
+SuccessExitStatus=143
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
