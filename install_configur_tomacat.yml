@@ -85,7 +85,7 @@
       command: systemctl is-active tomcat
       register: tomcat_status
       ignore_errors: yes
-      
+            
     - name: Start Tomcat if not running
       systemd:  # Use systemd to *start* the service
          name: tomcat
@@ -93,7 +93,7 @@
          enabled: yes 
       when: tomcat_status.rc != 0 and tomcat_status is defined
 
-   
+        
 
 
 

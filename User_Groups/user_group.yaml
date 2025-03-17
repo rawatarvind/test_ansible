@@ -14,7 +14,7 @@
         comment: "{{ comment }}"
         uid: "{{ userid }}"   # set the uid 
     tags: user
-  - name: create a new group in remote hosts
+  - name: create a new group on remote hosts
     group:
         name: "{{ groupname }}" #add a new group
         gid: "{{ groupid }}" #( add gid )

@@ -6,4 +6,4 @@
        command: systemctl is-active cockpit.socket
        register: abc
      - debug:
-         msg: "{{ abc }"
+         msg: "{{ abc }}"
